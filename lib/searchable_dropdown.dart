@@ -815,7 +815,7 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
           new TextField(
             controller: txtSearch,
             decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 32, vertical: 12)),
-            autofocus: true,
+            autofocus: false,
             onChanged: (value) {
               _updateShownIndexes(value);
               setState(() {});
