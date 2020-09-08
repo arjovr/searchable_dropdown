@@ -54,7 +54,8 @@ class SearchableDropdown<T> extends StatefulWidget {
   final dynamic icon;
   final dynamic underline;
   final dynamic doneButton;
-  final dynamic label;
+  final Text label;
+  final Text popupTitle;
   final dynamic closeButton;
   final bool displayClearIcon;
   final Icon clearIcon;
@@ -89,6 +90,7 @@ class SearchableDropdown<T> extends StatefulWidget {
   /// @param underline [String]|[Widget]|[Function] with parameter: __value__ returning [String]|[Widget] displayed below the selected item or the hint if none.
   /// @param doneButton [String]|[Widget]|[Function] with parameter: __value__ returning [String]|[Widget] displayed at the top of the search dialog box.
   /// @param label [String]|[Widget]|[Function] with parameter: __value__ returning [String]|[Widget] displayed above the selected item or the hint if none.
+  /// @param popupTitle [String]|[Widget]|[Function] with parameter: __value__ returning [String]|[Widget] displayed above the selected item or the hint if none.
   /// @param closeButton [String]|[Widget]|[Function] with parameter: __value__ returning [String]|[Widget] displayed at the bottom of the search dialog box.
   /// @param displayClearIcon whether or not to display an icon to clear the selected value.
   /// @param clearIcon [Icon] to be used for clearing the selected value.
@@ -120,7 +122,8 @@ class SearchableDropdown<T> extends StatefulWidget {
     dynamic icon = const Icon(Icons.arrow_drop_down),
     dynamic underline,
     dynamic doneButton,
-    dynamic label,
+    Text label,
+    Text popupTitle,
     dynamic closeButton = "Close",
     bool displayClearIcon = true,
     Icon clearIcon = const Icon(Icons.clear),
@@ -165,6 +168,7 @@ class SearchableDropdown<T> extends StatefulWidget {
       keyboardType: keyboardType,
       validator: validator,
       label: label,
+      popupTitle: popupTitle,
       searchFn: searchFn,
       multipleSelection: false,
       doneButton: doneButton,
@@ -188,7 +192,8 @@ class SearchableDropdown<T> extends StatefulWidget {
   /// @param icon [String]|[Widget]|[Function] with parameter: __selectedItems__ returning [String]|[Widget] displayed next to the selected items or the hint if none.
   /// @param underline [String]|[Widget]|[Function] with parameter: __selectedItems__ returning [String]|[Widget] displayed below the selected items or the hint if none.
   /// @param doneButton [String]|[Widget]|[Function] with parameter: __selectedItems__ returning [String]|[Widget] displayed at the top of the search dialog box. Cannot be null in multiple selection mode.
-  /// @param label [String]|[Widget]|[Function] with parameter: __selectedItems__ returning [String]|[Widget] displayed above the selected items or the hint if none.
+  /// @param label [Text] displayed above the selected items or the hint if none.
+  /// @param popupTitle [Text] displayed above the selected items or the hint if none.
   /// @param closeButton [String]|[Widget]|[Function] with parameter: __selectedItems__ returning [String]|[Widget] displayed at the bottom of the search dialog box.
   /// @param displayClearIcon whether or not to display an icon to clear the selected values.
   /// @param clearIcon [Icon] to be used for clearing the selected values.
@@ -219,7 +224,8 @@ class SearchableDropdown<T> extends StatefulWidget {
     dynamic icon = const Icon(Icons.arrow_drop_down),
     dynamic underline,
     dynamic doneButton = "Done",
-    dynamic label,
+    Text label,
+    Text popupTitle,
     dynamic closeButton = "Close",
     bool displayClearIcon = true,
     Icon clearIcon = const Icon(Icons.clear),
@@ -261,6 +267,7 @@ class SearchableDropdown<T> extends StatefulWidget {
       keyboardType: keyboardType,
       validator: validator,
       label: label,
+      popupTitle: popupTitle,
       searchFn: searchFn,
       multipleSelection: true,
       selectedItems: selectedItems,
@@ -298,6 +305,7 @@ class SearchableDropdown<T> extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.validator,
     this.label,
+    this.popupTitle,
     this.searchFn,
     this.multipleSelection = false,
     this.selectedItems = const [],
@@ -338,6 +346,7 @@ class SearchableDropdown<T> extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.validator,
     this.label,
+    this.popupTitle,
     this.searchFn,
     this.multipleSelection = false,
     this.selectedItems = const [],
@@ -463,6 +472,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
       displayMenu: displayMenu,
       menuConstraints: widget.menuConstraints,
       menuBackgroundColor: widget.menuBackgroundColor,
+      title: widget.popupTitle,
       callOnPop: () {
         if (!widget.dialogBox && widget.onChanged != null && selectedItems != null) {
           widget.onChanged(selectedResult);
@@ -650,6 +660,7 @@ class DropdownDialog<T> extends StatefulWidget {
   final BoxConstraints menuConstraints;
   final Function callOnPop;
   final Color menuBackgroundColor;
+  final Text title;
 
   DropdownDialog({
     Key key,
@@ -669,6 +680,7 @@ class DropdownDialog<T> extends StatefulWidget {
     this.menuConstraints,
     this.callOnPop,
     this.menuBackgroundColor,
+    this.title,
   })  : assert(items != null),
         super(key: key);
 
@@ -792,6 +804,7 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
               prepareWidget(widget.hint),
               Column(
                 children: <Widget>[
+                  Center(child: widget.title),
                   doneButtonWidget,
                   validatorOutputWidget
                 ],
@@ -801,6 +814,7 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
         : new Container(
             child: Column(
               children: <Widget>[
+                Center(child: widget.title),
                 doneButtonWidget,
                 validatorOutputWidget
               ],
