@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-const EdgeInsetsGeometry _kAlignedButtonPadding = EdgeInsetsDirectional.only(start: 16.0, end: 4.0);
+const EdgeInsetsGeometry _kAlignedButtonPadding = EdgeInsetsDirectional.only(start: 0, end: 0);
 const EdgeInsets _kUnalignedButtonPadding = EdgeInsets.zero;
 
 class NotGiven {
@@ -44,7 +44,7 @@ Widget prepareWidget(dynamic object, {dynamic parameter = const NotGiven(), Buil
 }
 
 class SearchableDropdown<T> extends StatefulWidget {
-  final List<DropdownMenuItem<T>> items;
+  final List<R2DropdownMenuItem<T>> items;
   final Function onChanged;
   final T value;
   final TextStyle style;
@@ -112,7 +112,7 @@ class SearchableDropdown<T> extends StatefulWidget {
   /// @param menuBackgroundColor [Color] background color of the menu whether in dialog box or menu mode.
   factory SearchableDropdown.single({
     Key key,
-    @required List<DropdownMenuItem<T>> items,
+    @required List<R2DropdownMenuItem<T>> items,
     @required Function onChanged,
     T value,
     TextStyle style,
@@ -214,7 +214,7 @@ class SearchableDropdown<T> extends StatefulWidget {
   /// @param menuBackgroundColor [Color] background color of the menu whether in dialog box or menu mode.
   factory SearchableDropdown.multiple({
     Key key,
-    @required List<DropdownMenuItem<T>> items,
+    @required List<R2DropdownMenuItem<T>> items,
     @required Function onChanged,
     List<int> selectedItems = const [],
     TextStyle style,
@@ -417,7 +417,11 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
   }
 
   dynamic get selectedResult {
-    return (widget.multipleSelection ? selectedItems : selectedItems?.isNotEmpty ?? false ? widget.items[selectedItems.first]?.value : null);
+    return (widget.multipleSelection
+        ? selectedItems
+        : selectedItems?.isNotEmpty ?? false
+            ? widget.items[selectedItems.first]?.value
+            : null);
   }
 
   int indexFromValue(T value) {
@@ -490,7 +494,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
     final List<Widget> items = _enabled ? List<Widget>.from(widget.items) : <Widget>[];
     int hintIndex;
     if (widget.hint != null || (!_enabled && prepareWidget(widget.disabledHint) != null)) {
-      final Widget emplacedHint = _enabled ? prepareWidget(widget.hint) : DropdownMenuItem<Widget>(child: prepareWidget(widget.disabledHint) ?? prepareWidget(widget.hint));
+      final Widget emplacedHint = _enabled ? prepareWidget(widget.hint) : R2DropdownMenuItem<Widget>(child: prepareWidget(widget.disabledHint) ?? prepareWidget(widget.hint));
       hintIndex = items.length;
       items.add(DefaultTextStyle(
         style: _textStyle.copyWith(color: Theme.of(context).hintColor),
@@ -601,7 +605,8 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
         Stack(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(10.0),
+              // padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.zero,
               child: result,
             ),
             widget.underline is NotGiven
@@ -644,7 +649,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
 }
 
 class DropdownDialog<T> extends StatefulWidget {
-  final List<DropdownMenuItem<T>> items;
+  final List<R2DropdownMenuItem<T>> items;
   final Widget hint;
   final bool isCaseSensitiveSearch;
   final dynamic closeButton;
@@ -696,7 +701,11 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
   _DropdownDialogState();
 
   dynamic get selectedResult {
-    return (widget.multipleSelection ? widget.selectedItems : widget.selectedItems?.isNotEmpty ?? false ? widget.items[widget.selectedItems.first]?.value : null);
+    return (widget.multipleSelection
+        ? widget.selectedItems
+        : widget.selectedItems?.isNotEmpty ?? false
+            ? widget.items[widget.selectedItems.first]?.value
+            : null);
   }
 
   void _updateShownIndexes(String keyword) {
@@ -738,13 +747,16 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
+      // NO
       padding: MediaQuery.of(context).viewInsets,
       duration: const Duration(milliseconds: 300),
       child: new Card(
         color: widget.menuBackgroundColor,
+        // NO
         margin: EdgeInsets.symmetric(vertical: widget.dialogBox ? 10 : 5, horizontal: widget.dialogBox ? 10 : 4),
         child: new Container(
           constraints: widget.menuConstraints,
+          // NO
           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -799,6 +811,7 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
         : SizedBox.shrink();
     return widget.hint != null
         ? new Container(
+            // NO
             margin: EdgeInsets.only(bottom: 8),
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               prepareWidget(widget.hint),
@@ -896,7 +909,7 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
       child: Scrollbar(
         child: new ListView.builder(
           itemBuilder: (context, index) {
-            DropdownMenuItem item = widget.items[shownIndexes[index]];
+            R2DropdownMenuItem item = widget.items[shownIndexes[index]];
             return new InkWell(
               onTap: () {
                 if (widget.multipleSelection) {
@@ -929,7 +942,9 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
                           Flexible(child: item),
                         ]))
                       : widget.displayItem(item, widget.selectedItems.contains(shownIndexes[index]))
-                  : widget.displayItem == null ? item : widget.displayItem(item, item.value == selectedResult),
+                  : widget.displayItem == null
+                      ? item
+                      : widget.displayItem(item, item.value == selectedResult),
             );
           },
           itemCount: shownIndexes.length,
@@ -962,5 +977,27 @@ class _DropdownDialogState<T> extends State<DropdownDialog> {
           ));
         }) ??
         SizedBox.shrink());
+  }
+}
+
+class R2DropdownMenuItem<T> extends DropdownMenuItem<T> {
+  /// Creates an item for a dropdown menu.
+  ///
+  /// The [child] argument is required.
+  const R2DropdownMenuItem({
+    Key key,
+    onTap,
+    value,
+    @required Widget child,
+  })  : assert(child != null),
+        super(key: key, child: child, onTap: onTap, value: value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 24),
+      alignment: AlignmentDirectional.centerStart,
+      child: child,
+    );
   }
 }
